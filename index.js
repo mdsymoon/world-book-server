@@ -26,7 +26,7 @@ client.connect((err) => {
   // post api book list
 
   app.post("/addBook", (req, res) => {
-    const { name, price, category } = req.body;
+    const { name, price, writer } = req.body;
     const file = req.files.file;
 
     const newImg = file.data;
@@ -38,7 +38,7 @@ client.connect((err) => {
       img: Buffer.from(encImg, "base64"),
     };
 
-    bookCollection.insertOne({ name, price, category, img }).then((result) => {
+    bookCollection.insertOne({ name, price, writer, img }).then((result) => {
       res.send(result.insertedCount > 0);
     });
   });
