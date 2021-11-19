@@ -15,14 +15,15 @@ app.use(fileUpload());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const uri =
-  `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.o8cqw.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.o8cqw.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 client.connect((err) => {
-  const BookCollection = client.db("WorldBook").collection("BookList");
+  const bookCollection = client.db("WorldBook").collection("BookList");
+
+  // post api book list
 
   app.post("/addBook", (req, res) => {
     const { name, price, category } = req.body;
@@ -36,13 +37,19 @@ client.connect((err) => {
       size: file.size,
       img: Buffer.from(encImg, "base64"),
     };
-    BookCollection
-      .insertOne({ name, price, category, img })
-      .then((result) => {
-        res.send(result.insertedCount > 0);
-      });
+
+    bookCollection.insertOne({ name, price, category, img }).then((result) => {
+      res.send(result.insertedCount > 0);
+    });
   });
 
+  // get api book list
+
+  app.get("/bookList", (req, res) => {
+    bookCollection.find().toArray((err, bookList) => {
+      res.send(bookList);
+    });
+  });
 });
 
 app.get("/", (req, res) => {
