@@ -22,6 +22,7 @@ const client = new MongoClient(uri, {
 });
 client.connect((err) => {
   const bookCollection = client.db("WorldBook").collection("BookList");
+  const favCollection = client.db("WorldBook").collection("FavList");
 
   // post api book list
 
@@ -50,6 +51,16 @@ client.connect((err) => {
       res.send(bookList);
     });
   });
+
+  // post api favorite book
+
+  app.post("/addToFav", (req, res) => {
+    const {name, price, writer, img ,email} = req.body;
+    favCollection.insertOne({name, price, writer, img ,email}).then((result) => {
+      res.send(result.insertedCount > 0);
+    })
+  })
+
 });
 
 app.get("/", (req, res) => {
