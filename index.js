@@ -55,9 +55,18 @@ client.connect((err) => {
   // post api favorite book
 
   app.post("/addToFav", (req, res) => {
-    const {name, price, writer, img ,email} = req.body;
+    const {name, price, writer, img, email} = req.body;
     favCollection.insertOne({name, price, writer, img ,email}).then((result) => {
       res.send(result.insertedCount > 0);
+    })
+  })
+
+  // get favorite book data by email
+
+  app.post('/favData', (req, res) => {
+    const email = req.body.email;
+    favCollection.find({email}).toArray((err, favorite) => {
+      res.send(favorite)
     })
   })
 
