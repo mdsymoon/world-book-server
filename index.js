@@ -61,12 +61,21 @@ client.connect((err) => {
     })
   })
 
-  // get favorite book data by email
+  // post favorite book api and get data by email
 
   app.post('/favData', (req, res) => {
     const email = req.body.email;
     favCollection.find({email}).toArray((err, favorite) => {
       res.send(favorite)
+    })
+  })
+
+  // delete favorite book 
+
+  app.delete("/deleteFav", (req, res) => {
+    favCollection.deleteOne({_id: ObjectId(req.body._id)})
+    .then(result => {
+      res.send(true)
     })
   })
 
